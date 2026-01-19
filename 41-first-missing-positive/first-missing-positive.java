@@ -2,13 +2,10 @@ class Solution {
     public int firstMissingPositive(int[] nums) {
         Arrays.sort(nums);
         for(int i=0;i<nums.length;i++){
-            if(nums[i]>0 && nums[i]<=nums.length && nums[i]!=nums[nums[i]-1]){
+            while(nums[i]>0 && nums[i]<=nums.length && nums[i]!=nums[nums[i]-1]){
                 int temp=nums[nums[i]-1];
                 nums[nums[i]-1]=nums[i];
                 nums[i]=temp;
-            }
-            else{
-                continue;
             }
         }
         for(int i=0;i<nums.length;i++){
