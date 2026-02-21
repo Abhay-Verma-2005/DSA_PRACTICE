@@ -1,4 +1,5 @@
 class Solution {
+    HashSet<Integer> h=new HashSet<>(Arrays.asList(2,3,5,7,11,13,17,19,23,29,31));
     public int countPrimeSetBits(int left, int right) {
         int c = 0;
         for (int i = left; i <= right; i++) {
@@ -10,11 +11,8 @@ class Solution {
         return c;
     }
     private boolean isPrime(int n) {
-        if (n < 2) return false;
-        for (int i = 2; i * i <= n; i++) {
-            if (n % i == 0)
-                return false;
-        }
-        return true;
+        
+        if(h.contains(n)) return true;
+        return false;
     }
 }
