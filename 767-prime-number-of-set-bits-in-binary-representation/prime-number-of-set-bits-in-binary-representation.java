@@ -1,18 +1,20 @@
 class Solution {
     public int countPrimeSetBits(int left, int right) {
-        int d=0;
-        HashSet<Integer> h=new HashSet<>(Arrays.asList(2,3,5,7,11,13,17,19,23,29,31));
-        for(int j=left;j<=right;j++){
-            int a=0;
-            int i=j;
-            while(i>0){
-                if(i%2==1){
-                    a++;
-                }
-                i/=2;
+        int c = 0;
+        for (int i = left; i <= right; i++) {
+            int bits = Integer.bitCount(i);
+            if (isPrime(bits)) {
+                c++;
             }
-            if(h.contains(a)) d++;
         }
-        return d;
+        return c;
+    }
+    private boolean isPrime(int n) {
+        if (n < 2) return false;
+        for (int i = 2; i * i <= n; i++) {
+            if (n % i == 0)
+                return false;
+        }
+        return true;
     }
 }
