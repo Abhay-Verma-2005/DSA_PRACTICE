@@ -1,47 +1,59 @@
 class Solution {
     public int countPaths(int n, int[][] roads) {
-        long MOD = 1_000_000_007;
-        List<List<long[]>> graph = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-            graph.add(new ArrayList<>());
-
-        for (int[] r : roads) {
-            graph.get(r[0]).add(new long[]{r[1], r[2]});
-            graph.get(r[1]).add(new long[]{r[0], r[2]});
+        HashMap<Integer,HashMap<Integer,Long>>map = new HashMap<>();
+        for(int i=0;i<n;i++){
+            map.put(i,new HashMap<>());
         }
-        long[] dist = new long[n];
-        Arrays.fill(dist, Long.MAX_VALUE);
-        long[] ways = new long[n];
-        PriorityQueue<long[]> pq =new PriorityQueue<>((a,b)->Long.compare(a[1],b[1]));
+        int mod = 1000000007;
 
-        dist[0] = 0;
-        ways[0] = 1;
-        pq.offer(new long[]{0, 0});
+        for(int i[] : roads){
+            int v1 = i[0];
+            int v2 = i[1];
+            long cost = i[2];
 
-        while (!pq.isEmpty()) {
+            map.get(v1).put(v2,cost);
+            map.get(v2).put(v1,cost);
+        }
+        PriorityQueue<Pair>pq= new PriorityQueue<>((a,b)->{
+            return Long.compare(a.cost,b.cost);
+        });
+        pq.add(new Pair(0,0));
 
-            long[] cur = pq.poll();
-            int node = (int) cur[0];
-            long d = cur[1];
+        long dist[] = new long [n];
+        Arrays.fill(dist,Long.MAX_VALUE);
+        dist[0]=0L;
 
-            if (d > dist[node]) continue;
+        long ways[] = new long[n];
+        ways[0]=1L;
 
-            for (long[] nei : graph.get(node)) {
+        while(!pq.isEmpty()){
+            Pair rm = pq.poll();
 
-                int next = (int) nei[0];
-                long newDist = d + nei[1];
+            if(dist[rm.vtx]<rm.cost){
+                continue;
+            }
 
-                if (newDist < dist[next]) {
-                    dist[next] = newDist;
-                    ways[next] = ways[node];
-                    pq.offer(new long[]{next, newDist});
-                } 
-                else if (newDist == dist[next]) {
-                    ways[next] = (ways[next] + ways[node]) % MOD;
+            for(int ngbr : map.get(rm.vtx).keySet()){
+                long newCost = map.get(rm.vtx).get(ngbr)+rm.cost;
+                if(dist[ngbr]>newCost){
+                    dist[ngbr]=newCost;
+                    ways[ngbr] = ways[rm.vtx];
+                    pq.add(new Pair(ngbr,newCost));
+                }
+                else if(dist[ngbr]==newCost){
+                    ways[ngbr] = (ways[ngbr]+ways[rm.vtx])%mod;
                 }
             }
         }
+        return (int)ways[n-1];
+    }
 
-        return (int)(ways[n - 1] % MOD);
+    class Pair{
+        int vtx;
+        long cost;
+        public Pair(int vtx,long cost){
+            this.vtx = vtx;
+            this.cost = cost;
+        }
     }
 }
