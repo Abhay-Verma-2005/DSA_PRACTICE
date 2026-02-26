@@ -1,62 +1,39 @@
 class Solution {
     public int[] minimumTime(int n, int[][] edges, int[] disappear) {
-        HashMap<Integer, HashMap<Integer,Integer>>map = new HashMap<>();
-
+        ArrayList<ArrayList<Pair>> g= new ArrayList<>();
         for(int i=0;i<n;i++){
-            map.put(i,new HashMap<>());
+            g.add(new ArrayList<>());
         }
-
-        for(int e[] : edges){
-            int e1 = e[0];
-            int e2 = e[1];
-            int cost = e[2];
-            map.get(e1).put(e2,Math.min(cost,map.get(e1).getOrDefault(e2,Integer.MAX_VALUE)));
-            map.get(e2).put(e1,Math.min(cost,map.get(e2).getOrDefault(e1,Integer.MAX_VALUE)));
+        for(int[] ele:edges){
+            g.get(ele[0]).add(new Pair(ele[1],ele[2]));
+            g.get(ele[1]).add(new Pair(ele[0],ele[2]));
         }
-
-        HashSet<Integer>visited = new HashSet<>();
-        PriorityQueue<Pair>pq = new PriorityQueue<>((a,b)->{
-            return a.cost-b.cost;
-        });
+        PriorityQueue<Pair> pq= new PriorityQueue<>((a,b)->Integer.compare(a.curr,b.curr));
+        int[] ans= new int[n];
+        Arrays.fill(ans,-1);
         pq.add(new Pair(0,0));
-        int dist[] = new int[n];
-        Arrays.fill(dist,-1);
-        dist[0]=0;
-
         while(!pq.isEmpty()){
-            // remove
-            Pair rm = pq.poll();
-
-            // check
-            if(visited.contains(rm.vtx)){
-                continue;
-            }
-            
-            // mark visited
-            visited.add(rm.vtx);
-
-            // self work
-            if(rm.cost>=disappear[rm.vtx]){
-                continue;  
-            }
-            dist[rm.vtx] = rm.cost;
-
-            // add ngbrs
-            for(int ngbr : map.get(rm.vtx).keySet()){
-                if(!visited.contains(ngbr)){
-                    pq.add(new Pair(ngbr, rm.cost+map.get(rm.vtx).get(ngbr)));
+            Pair rm= pq.poll();
+            int vtx=rm.val;
+            int curr=rm.curr;
+            if(ans[vtx] != -1 || curr>=disappear[vtx]) continue;
+            ans[vtx]=curr;
+            for(Pair ele: g.get(vtx)){
+                int k=curr+ele.curr;
+                if(ans[ele.val]==-1 && k<disappear[ele.val]){
+                    pq.add(new Pair(ele.val,k));
                 }
             }
         }
-        return dist;
+        return ans;
+        
     }
-
     class Pair{
-        int vtx;
-        int cost;
-        public Pair(int vtx, int cost){
-            this.vtx = vtx;
-            this.cost = cost;
+        int val;
+        int curr;
+        public Pair(int a, int b){
+            val=a;
+            curr=b;
         }
     }
 }
