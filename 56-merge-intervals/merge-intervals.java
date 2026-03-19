@@ -6,7 +6,7 @@ class Solution {
         int e=intervals[0][1];
 
         for(int i=1; i<intervals.length; i++){
-            if(intervals[i][0]<=e){
+            if(e>=intervals[i][0]){
                 e=Math.max(e,intervals[i][1]);
             } 
             else{
@@ -17,7 +17,12 @@ class Solution {
         }
 
         arr.add(new int[]{st, e});
-
-        return arr.toArray(new int[arr.size()][]);
+        int[][] ans= new int[arr.size()][2];
+        int i=0;
+        for(int [] ele:arr){
+            ans[i]=ele;
+            i++;
+        }
+        return ans;
     }
 }
