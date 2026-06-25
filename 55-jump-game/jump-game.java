@@ -3,7 +3,7 @@ class Solution {
         int n=nums.length;
         int limit=0;
         for(int i=0;i<nums.length;i++){
-            if(i!=nums.length-1 && limit+nums[i]<=i) return false;
+            if(limit<i) return false;
             limit=Math.max(i+nums[i],limit);
         }
         return true;
